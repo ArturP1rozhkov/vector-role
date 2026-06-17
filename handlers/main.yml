@@ -1,0 +1,5 @@
+---
+- name: Validate vector config
+  ansible.builtin.command:
+    cmd: "{{ vector_install_dir }}/bin/vector validate {{ vector_install_dir }}/config/vector.yml"
+  changed_when: false
