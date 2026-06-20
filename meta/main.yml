@@ -1,6 +1,8 @@
 ---
 galaxy_info:
   author: ArturP1rozhkov
+  namespace: arturp1rozhkov
+  role_name: vector_role
   description: Ansible role for Vector
   license: MIT
   min_ansible_version: "2.10"

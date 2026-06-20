@@ -1,0 +1,45 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Bootstrap Python on Ubuntu
+      ansible.builtin.raw: |
+        test -e /usr/bin/python3 || (apt-get update && apt-get install -y python3)
+      changed_when: false
+      failed_when: false
+      when: inventory_hostname == "ubuntu"
+
+    - name: Bootstrap Python 3.9 on Oracle Linux
+      ansible.builtin.raw: |
+        test -e /usr/bin/python3.9 || (dnf install -y python39)
+      changed_when: false
+      failed_when: false
+      when: inventory_hostname == "oraclelinux"
+
+    - name: Reset connection
+      ansible.builtin.meta: reset_connection
+
+    - name: Gather facts after Python bootstrap
+      ansible.builtin.setup:
+
+    - name: Install utility packages on Ubuntu
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - tar
+          - gzip
+          - unzip
+        state: present
+        update_cache: true
+      when: inventory_hostname == "ubuntu"
+
+    - name: Install utility packages on Oracle Linux
+      ansible.builtin.dnf:
+        name:
+          - ca-certificates
+          - tar
+          - gzip
+          - unzip
+        state: present
+      when: inventory_hostname == "oraclelinux"
