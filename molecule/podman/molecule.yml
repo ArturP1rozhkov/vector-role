@@ -1,0 +1,38 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: podman
+
+platforms:
+  - name: vector-podman
+    image: docker.io/python:3.11-slim
+    pre_build_image: true
+    command: sleep infinity
+
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: "${MOLECULE_PROJECT_DIRECTORY}"
+  inventory:
+    hosts:
+      all:
+        hosts:
+          vector-podman:
+            ansible_connection: containers.podman.podman
+  playbooks:
+    create: create.yml
+    destroy: destroy.yml
+
+scenario:
+  name: podman
+  test_sequence:
+    - create
+    - converge
+    - idempotence
+    - verify
+    - destroy
+
+verifier:
+  name: ansible

@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: true
+  roles:
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+    # - role: /home/vboxuser/ansible/vector-role ## вариант пути для запуска на свежем стеке

@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: true
+  vars:
+    vector_install_dir: "{{ ansible_facts['user_dir'] }}/vector"
+
+  tasks:
+    - name: Check vector install directory
+      ansible.builtin.stat:
+        path: "{{ vector_install_dir }}"
+      register: vector_dir
+
+    - name: Check vector binary
+      ansible.builtin.stat:
+        path: "{{ vector_install_dir }}/bin/vector"
+      register: vector_bin
+
+    - name: Check vector config
+      ansible.builtin.stat:
+        path: "{{ vector_install_dir }}/config/vector.yml"
+      register: vector_cfg
+
+    - name: Validate vector config
+      ansible.builtin.command:
+        cmd: "{{ vector_install_dir }}/bin/vector validate --no-environment {{ vector_install_dir }}/config/vector.yml"
+      register: vector_validate
+      changed_when: false
+
+    - name: Assert vector role results
+      ansible.builtin.assert:
+        that:
+          - vector_dir.stat.exists
+          - vector_dir.stat.isdir
+          - vector_bin.stat.exists
+          - vector_bin.stat.isreg
+          - vector_cfg.stat.exists
+          - vector_cfg.stat.isreg
+          - vector_validate.rc == 0

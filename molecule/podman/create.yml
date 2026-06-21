@@ -1,0 +1,17 @@
+---
+- name: Create
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create podman container
+      containers.podman.podman_container:
+        name: vector-podman
+        image: docker.io/python:3.11-slim
+        state: started
+        command: sleep infinity
+      register: podman_container_result
+
+    - name: Assert container is running
+      ansible.builtin.assert:
+        that:
+          - podman_container_result.container.State.Running | default(false)
